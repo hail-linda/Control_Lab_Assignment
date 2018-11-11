@@ -8,13 +8,6 @@
 
 ## index
 
-- 一些术语、关键词的介绍
-- 几个常用算法的介绍与对比
-     - SIFT<sup>[1-2]</sup>
-     - SURF<sup>[1-2]</sup>
-     - ORB<sup>[1-2]</sup>
-- 某种算法的opencv-python实现与展示
-
 [TOC]
 
 ## 术语与一些关键词
