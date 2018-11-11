@@ -47,7 +47,7 @@ __SIFT算法大致的实现流程为：__
  3. 关键点的方向确定
  4. 特征向量的生成
 
-#### 尺度空间极点检测：
+#### 尺度空间极点检测
 
 真实世界中的物体只有在一定的尺度上才有意义，我们所要寻找的特征点就是在连续尺度空间下位置不改变的点。
 
@@ -82,7 +82,7 @@ $$
 2. LoG的运算效率不高
 
 
-#### 关键点(特征点)精确定位:
+#### 关键点(特征点)精确定位
 计算机中存储的图像数据是离散的，而我们之前找到的极值点也就是离散空间中的极值点，但是离散空间中的极值点并不是真实的连续空间中的极值点。所以需要对DoG空间进行拟合处理，以找到极值点的精确位置和尺度。另外，我们还需要去除那些在边缘位置的极值点，以提高关键点的稳定性。
 
 
@@ -123,7 +123,7 @@ $$
 
 取幅值最高的方向为主方向,超过峰值能量的百分之80的方向，称为辅方向。
 
-#### 特征向量的生成:
+#### 特征向量的生成
 
 到这里,我们已经得到了一组SIFT特征点,包含了位置,尺度,方向等信息.
 
@@ -163,7 +163,7 @@ SURF是一种稳健的局部特征点检测和描述算法<sup>[11-12]</sup>,200
 
 以下将根据流程中标红的部分,对比性地分析SIFT和SURF的不同,分析SURF如何提高计算速度与稳定性:
 
-#### 构建Hessian矩阵:
+#### 构建Hessian矩阵
 
 严格的来说,构建海森矩阵与构建尺度空间两个步骤,SIFT与SURF都进行了,区别在于顺序的不同.
 
@@ -200,7 +200,7 @@ $$
 >https://zh.wikipedia.org/wiki/%E7%A7%AF%E5%88%86%E5%9B%BE
 >积分图的每一点（x, y）的值是原图中对应位置的左上角区域的所有值得和
 
-#### 确定特征点的主方向:
+#### 确定特征点的主方向
 
 SIFT 在特征点邻域内进行最大梯度直方图统计,找到最大的梯度或者大于80%最大梯度方向作为特征的主方向.
 
@@ -213,7 +213,7 @@ SIFT 在特征点邻域内进行最大梯度直方图统计,找到最大的梯�
 >例如，当前有一个人脸图像集合。通过观察可以发现，眼睛的颜色要比两颊的深。因此，用于人脸检测的哈尔特征是分别放置在眼睛和脸颊的两个相邻矩形。这些矩形的位置则通过类似于人脸图像的外接矩形的检测窗口进行定义。
 
 
-#### 确定特征描述子:
+#### 确定特征描述子
 
 __SIFT__:由于采用8方向作为主方向，所以描述子的维度为4*4*8=128；
 
@@ -228,7 +228,7 @@ ORB算法的技术重点为:
 
 以下就这两点进行具体阐述:
 
-#### oFAST:
+#### oFAST
 
 首先介绍一下FAST特征点检测方法:
 
@@ -292,9 +292,119 @@ S_{\theta} = R_{\theta}S\tag{15}
 $$
 这样，在求取特征点描述符的时候，就使用$S_θ$中的像素点即可。
 
-以上,对于SIFT,SURF,ORB三种算法进行了针对性的描述,下面将使用Python语言在Ubuntu16.04环境下对
+以上,对于SIFT,SURF,ORB三种算法进行了针对性的描述,下面将使用Python语言在Ubuntu16.04环境下实现FAST算法:
+
+## FAST算法的代码实现
+
+### 目的
+
+使用Python编程实现FAST算法,其中该算法的核心部分不使用既有库
+
+### 源码与注释
+
+``` Python
+import cv2
+import numpy as np
+
+THRESHOLD = 40
+N = 12
+
+circle_list=[
+	[2,2],[-2,2],[2,-2],[-2,-2],
+	[3,-1],[3,0],[3,1],[-3,-1],
+	[-3,0],[-3,1],[-1,3],[0,3],
+	[1,3],[-1,-3],[0,-3],[1,-3]
+	]
+
+src = cv2.imread('src.jpg')
+gray = np.zeros(src.shape)
+result = np.zeros(src.shape)
+
+for i in range(gray.shape[0]):
+	if i%100 == 0:
+		print(i)
+	for j in range(gray.shape[1]):
+		g = sum(src[i,j,0:3])/3
+		gray[i,j,0] = g
+		gray[i,j,1] = g
+		gray[i,j,2] = g
+
+print(gray.shape)
 
 
+for i in range(5,gray.shape[0]-5):
+	if i%100 == 0:
+		print(i)
+	for j in range(5,gray.shape[1]-5):
+		s = 0
+		for k in range(4):
+			a=i+circle_list[k][0]
+			b=j+circle_list[k][1]
+			if abs(gray[a,b,1]-gray[i,j,1]) > THRESHOLD :
+				s += 1
+		if s > 2 :
+			s = 0
+			for k in range(16):
+				a=i+circle_list[k][0]
+				b=j+circle_list[k][1]
+				if abs(gray[a,b,1]-gray[i,j,1]) > THRESHOLD :
+					s += 1
+			if s > N or s == N :
+				result[i,j,0]=0
+				result[i,j,1]=0
+				result[i,j,2]=255
+			else :
+				result[i,j,0]=gray[i,j,0]
+				result[i,j,1]=gray[i,j,1]
+				result[i,j,2]=gray[i,j,2]			
+		else :
+			result[i,j,0]=gray[i,j,0]
+			result[i,j,1]=gray[i,j,1]
+			result[i,j,2]=gray[i,j,2]			
+			
+cv2.imwrite('result'+str(THRESHOLD)+'.jpg',result)
+```
+
+
+### 代码块解释
+
+| 行数 | 功能 |
+| :-------------: | :-------------: |
+| 1-2  |引入相关库  |
+| 4-5  | 设定阈值 |
+| 14-16  | 引入源图片并新建两张图 |
+| 18-25  | 将src灰度化后的图存入gray |
+| 30-58  | s算法主体 |
+| 34-39  | 初步判断四角,选择灰度值超过阈值的点的数量超过2的点 |
+| 42-50  | 判断圆周16点,超过阈值的点大于N的点标红 |
+| 51-58  | 不合格的点赋灰度值,此处也可赋为原RGB图 |
+| 60  | 存图  |
+
+
+### 结果示例
+
+<center>
+<img src="./src.jpg" >
+<br></br>
+原图</center>
+<center>
+<figure class="half">
+    <img src="./result2.jpg" width="350">
+    <img src="./result10.jpg" width="350">
+</figure>
+<figure class="half">
+    <img src="./result20.jpg" width="350">
+    <img src="./result40.jpg" width="350">
+</figure>
+</center>
+|两点灰度差值阈值:THRESHOLD|16个圆周点最低合格数量:N|
+| :----: | :------: |
+| 阈值=2;N=12  | 阈值=10;N==12 |
+| 阈值=20;N==12  | 阈值=40;N==12  |
+
+
+
+## Reference:
 
 [3] https://blog.csdn.net/mmjwung/article/details/6748895  
 [4] https://blog.csdn.net/a429051366/article/details/51009438  
