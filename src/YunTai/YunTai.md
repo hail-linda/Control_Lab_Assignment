@@ -300,12 +300,11 @@ $$
 
 使用Python编程实现FAST算法,其中该算法的核心部分不使用既有库
 
-### 源码与注释
+### 源码
 
 ``` Python
 import cv2
 import numpy as np
-
 THRESHOLD = 40
 N = 12
 
@@ -315,7 +314,6 @@ circle_list=[
 	[-3,0],[-3,1],[-1,3],[0,3],
 	[1,3],[-1,-3],[0,-3],[1,-3]
 	]
-
 src = cv2.imread('src.jpg')
 gray = np.zeros(src.shape)
 result = np.zeros(src.shape)
@@ -328,9 +326,6 @@ for i in range(gray.shape[0]):
 		gray[i,j,0] = g
 		gray[i,j,1] = g
 		gray[i,j,2] = g
-
-print(gray.shape)
-
 
 for i in range(5,gray.shape[0]-5):
 	if i%100 == 0:
@@ -372,9 +367,7 @@ cv2.imwrite('result'+str(THRESHOLD)+'.jpg',result)
 | :-------------: | :-------------: |
 | 1-2  |引入相关库  |
 | 4-5  | 设定阈值 |
-| 14-16  | 引入源图片并新建两张图 |
 | 18-25  | 将src灰度化后的图存入gray |
-| 30-58  | s算法主体 |
 | 34-39  | 初步判断四角,选择灰度值超过阈值的点的数量超过2的点 |
 | 42-50  | 判断圆周16点,超过阈值的点大于N的点标红 |
 | 51-58  | 不合格的点赋灰度值,此处也可赋为原RGB图 |
@@ -389,12 +382,12 @@ cv2.imwrite('result'+str(THRESHOLD)+'.jpg',result)
 原图</center>
 <center>
 <figure class="half">
-    <img src="./result2.jpg" width="350">
-    <img src="./result10.jpg" width="350">
+    <img src="./result2.jpg" width="45%">
+    <img src="./result10.jpg" width="45%">
 </figure>
 <figure class="half">
-    <img src="./result20.jpg" width="350">
-    <img src="./result40.jpg" width="350">
+    <img src="./result20.jpg" width="45%">
+    <img src="./result40.jpg" width="45%">
 </figure>
 </center>
 |两点灰度差值阈值:THRESHOLD|16个圆周点最低合格数量:N|
@@ -409,16 +402,16 @@ cv2.imwrite('result'+str(THRESHOLD)+'.jpg',result)
 [3] https://blog.csdn.net/mmjwung/article/details/6748895  
 [4] https://blog.csdn.net/a429051366/article/details/51009438  
 [5]Lowe D G. Distinctive image features from scale-invariant keypoints[J]. International journal of computer vision, 2004, 60(2): 91-110.  
-[6] https://blog.csdn.net/lwzkiller/article/details/54633670  
-[7] https://blog.csdn.net/lhanchao/article/details/52345845
-[8] https://blog.csdn.net/weixin_38404120/article/details/73740612
-[9] https://www.cnblogs.com/YiXiaoZhou/p/5893835.html
-[10] https://blog.csdn.net/dcrmg/article/details/52601010
-[11] Bay H, Tuytelaars T, Van Gool L. Surf: Speeded up robust features[C]//European conference on computer vision. Springer, Berlin, Heidelberg, 2006: 404-417.
-[12] https://blog.csdn.net/songzitea/article/details/16986423
-[13] https://blog.csdn.net/eternity1118/article/details/51152162
-[14] https://blog.csdn.net/lhanchao/article/details/52612954
-[15] https://blog.csdn.net/zouzoupaopao229/article/details/52625678
+[6] https://blog.csdn.net/lwzkiller/article/details/54633670    
+[7] https://blog.csdn.net/lhanchao/article/details/52345845  
+[8] https://blog.csdn.net/weixin_38404120/article/details/73740612  
+[9] https://www.cnblogs.com/YiXiaoZhou/p/5893835.html  
+[10] https://blog.csdn.net/dcrmg/article/details/52601010  
+[11] Bay H, Tuytelaars T, Van Gool L. Surf: Speeded up robust features[C]//European conference on computer vision. Springer, Berlin, Heidelberg, 2006: 404-417.  
+[12] https://blog.csdn.net/songzitea/article/details/16986423  
+[13] https://blog.csdn.net/eternity1118/article/details/51152162  
+[14] https://blog.csdn.net/lhanchao/article/details/52612954  
+[15] https://blog.csdn.net/zouzoupaopao229/article/details/52625678   
 
 
 
