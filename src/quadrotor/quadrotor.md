@@ -1,18 +1,5 @@
 # 四轴飞行器
 
-## index
-
-[TOC]
-
-
-TODOs:
-
-- 对matlab-simulink的学习  
-
-- 找一个现成的库或者工程[][id]
-
-- 对其中各个部分/参数的理解、调整，并尝试搞清楚他们的影响
-
 
 ### 对matlab-simulink的简单学习<sup>[1]</sup>
 
@@ -63,7 +50,7 @@ KI=2\quad
 KD=15\quad  
 $
 
-### 找一个现成的库或者工程,写一点<sup>[2]</sup>
+### 找一个现成的库或者工程,为可能的任务进行参数调整<sup>[2]</sup>
 
 在github找到了一个开源的四轴飞控
 
@@ -73,6 +60,8 @@ $
 
 工程没有使用simulink,而是全部使用\*.m文件
 通过阅读代码,分析各个部分作用,找到路径文件,PID控制文件
+
+按照例程的格式新建一个路径文件并进行仿真
 
 ![](/home/linda/Ctrl-lab/Control_Lab_Assignment/src/quadrotor/simu3.png)
 

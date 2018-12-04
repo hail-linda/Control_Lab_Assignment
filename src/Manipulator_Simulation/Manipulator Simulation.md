@@ -1,14 +1,8 @@
 # 多级机械臂联动控制算法
 
-## index
-[TOC]
 
-TODOs:
 
-- 数据成功读入的反馈
-- 能否在给定数据下成功运动的判断（可行域判断）
-- 得到正确计算结果
-- 可视化仿真
+
 
 ## 坐标轴变换方法
 
@@ -17,7 +11,11 @@ TODOs:
 对于在三维空间里的一个参考系，任何坐标系的取向，都可以用三个欧拉角来表现。参考系又称为实验室参考系，是静止不动的。而坐标系则固定于刚体，随着刚体的旋转而旋转。  
 用欧拉角描述三维刚体旋转，它将刚体绕过原点的轴(i,j,k)旋转θ，分解成三步（蓝色是起始坐标系，而红色的是旋转之后的坐标系。）。
 
-![](https://pic4.zhimg.com/80/v2-c339d9c88aa8988a0480365c74bbe1eb_hd.jpg)
+<center>
+<img width="40%" src="https://pic4.zhimg.com/80/v2-c339d9c88aa8988a0480365c74bbe1eb_hd.jpg">
+</center>
+
+
 
 
 1. 绕z轴旋转α，使x轴与N轴重合，N轴是旋转前后两个坐标系x-y平面的交线
@@ -38,7 +36,7 @@ TODOs:
 
 ![](https://www.zhihu.com/equation?tex=%5Cleft%28%5Cbegin%7Bmatrix%7DX+%5C%5CY+%5C%5CZ%5Cend%7Bmatrix%7D%5Cright%29+%3D+M%5Cleft%28%5Cbegin%7Bmatrix%7Dx+%5C%5Cy+%5C%5Cz%5Cend%7Bmatrix%7D%5Cright%29)
 
-### 四元数 
+### 四元数 <sup>[1]-[3]</sup>
 
 这部分最后也还没有理解如何实现
 
@@ -95,17 +93,80 @@ $$
 
 这样，就完成了一次四元数旋转运算。
 
-https://krasjet.github.io/quaternion/quaternion.pdf  
-https://www.zhihu.com/question/23005815  
-https://zh.wikipedia.org/wiki/%E5%9B%9B%E5%85%83%E6%95%B0%E4%B8%8E%E7%A9%BA%E9%97%B4%E6%97%8B%E8%BD%AC  
+
+
+### DH参数矩阵<sup>[4]</sup>
+
+在机器人运动学中，所谓连杆就是具有一定运动学功能的刚性杆，这和《机械原理》中的构件有相似的性质，就是它是运动的最小单元，而且由于它本身的形状和大小会对运动有影响。至于刚性，就是在运动学阶段我们认为连杆受力不会发生变形（事实上机器人在操作臂在运动过程中受力情况复杂，一定会发生变形）。在机器人操作臂中，研究的内容主要是一系列连杆通过关节连接起来而组成的空间开式运动链。
+
+描述的连杆参数有两个，一个是连杆的长度a，另一个是连杆的转角α
 
 
 
-## Matlab 仿真
+<center>
+<img width="60%" src="https://images2015.cnblogs.com/blog/802039/201612/802039-20161231095616148-1602826667.jpg">
+</center>
+
+
+上面我使用了两个参数完全地将一个连杆的运动学特殊性描述出来了，接下来就需要思考如何描述相邻两个连杆之间的关系，两个连杆之间是通过一个关节连接的，我们很容易想到描述连杆之间的关系实际上反映的是这个关节轴的一些特性。
+
+
+<center>
+<img width="60%" src="/home/linda/.config/Typora/typora-user-images/1543941840302.png">
+</center>
+
+连杆i-1和连杆i通过关节轴i相互连接，沿着关节轴i的轴向，将连杆i-1的长度$a_{i-1}$移动到和连杆i的长度$a_i$的距离叫做连杆偏距$d_i$ ，这个参数反映了两个连杆沿着轴i的距离。
+
+连杆i-1和连杆i的长度线并不共线，这说明这两条线之间存在夹角，我们规定绕轴i将长度线$a_{i-1}$的延长线转动到和长度线$a_i$ 转过的角度叫做关节角θi, 
+
+当按照上述的要求定义好坐标系之后，四个连杆参数可以有在坐标系中的描述：
+
+　 -　$a_i$ = 沿着$X_i$ 轴从$Z_i$ 移动到$Z_{i+1}$的距离。
+
+　-　$α_i$ = 绕着$X_i$轴从$Z_i$转到$Z_{i+1}$的角度。
+
+　-　$d_i$ = 沿着$Z_i$轴从$X_{i-1}$到$X_i$的距离。
+
+　-　$θ_i$ = 绕着$Z_i$轴从$X_{i-1}$到$X_i$的角度。
+
+以上四个参数可以确定一个连杆在空间中的相对位置
+
+由多个连杆的这样四个参数可以组成DH参数矩阵,用于描述一个机械臂的状态
 
 
 
 
+
+## 基于Matlab/robotics toolbox 的机械臂仿真
+
+```matlab
+startup_rvc
+```
+
+引入robotics库
+
+```matlab
+dh = [
+0 0 pi/2 0
+0 0.5 0 pi/2
+0 0 pi/2 pi/4
+1 0 -pi/2 0
+0 0 pi/2 0
+1 0 0 0
+]%带球形腕的拟人臂
+
+r=SerialLink(dh)
+```
+
+以DH矩阵形式构建一机械臂
+
+```matlab
+r.teach
+```
+
+<center>
+<img width="50%" src="/home/linda/.config/Typora/typora-user-images/1543943686088.png">
+</center>
 
 https://blog.csdn.net/Kalenee/article/details/81990130  
 matlab工具箱
@@ -113,3 +174,22 @@ matlab工具箱
 https://blog.csdn.net/bjash/article/details/80117771  
 工具箱下载地址：  
 https://pan.baidu.com/s/1pLo7V7d
+
+
+
+
+
+
+
+
+## reference:
+
+
+[1] https://krasjet.github.io/quaternion/quaternion.pdf  
+[2] https://www.zhihu.com/question/23005815  
+[3]https://zh.wikipedia.org/wiki/%E5%9B%9B%E5%85%83%E6%95%B0%E4%B8%8E%E7%A9%BA%E9%97%B4%E6%97%8B%E8%BD%AC  
+[4] https://www.cnblogs.com/wangxiaoyong/p/6238864.html  
+[5]  https://zhuanlan.zhihu.com/p/24797661  
+[6] https://blog.csdn.net/fendoubasaonian/article/details/78229445  
+[7] https://mirsking.com/2014/02/05/learning_robotics_toolbox_for_matlab/  
+[8] https://www.youtube.com/watch?v=-PiHM14OZhU
