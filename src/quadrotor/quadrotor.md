@@ -63,27 +63,22 @@ KI=2\quad
 KD=15\quad  
 $
 
-### 找一个现成的库或者工程,加一点功能<sup>[2-3]</sup>
+### 找一个现成的库或者工程,写一点<sup>[2]</sup>
 
-找到了一个叫做Wil Selby的Ouster工程项目经理开源的四轴飞控
+在github找到了一个开源的四轴飞控
 
-[MatlabQuadSinAP](https://github.com/wilselby/MatlabQuadSimAP)
+[https://github.com/yrlu/quadrotor)
 
-![](/home/linda/Ctrl-lab/Control_Lab_Assignment/src/quadrotor/simu2.png)
+![](/home/linda/Ctrl-lab/Control_Lab_Assignment/src/quadrotor/simu4.png)
 
-工程里使用simulink仿真搭建计算过程
-使用\*.m代码赋各参数值与描述每一个模块的作用
-工程描述了一个从(0,0,0)到(0,0.25,0.5)的运动过程
+工程没有使用simulink,而是全部使用\*.m文件
+通过阅读代码,分析各个部分作用,找到路径文件,PID控制文件
 
-
+![](/home/linda/Ctrl-lab/Control_Lab_Assignment/src/quadrotor/simu3.png)
 
 
 
 ## reference:
 [1]  https://ww2.mathworks.cn/help/simulink/gs/create-a-simple-model.html  
 [2] https://github.com/wilselby/MatlabQuadSimAP  
-[3] https://www.wilselby.com/research/arducopter/simulation-environment/  
-[3] 
-
-[]:
 
