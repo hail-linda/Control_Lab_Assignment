@@ -12,6 +12,7 @@ HEU control-lab 课程作业
 > 飞行器（四旋翼）：控制算法仿真  
 > 机械臂：多级机械臂联动路径规划
 
+全文链接：https://github.com/hail-linda/Control_Lab_Assignment/blob/master/control-lab%20%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A-%E6%9D%8E%E6%98%95%E8%BE%BE.pdf
 
 ## 云台
 
